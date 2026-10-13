@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f7fb">
+  <title>生成AI 利用リスクチェック</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand-mark" aria-hidden="true">AI</div>
+    <div><span class="eyebrow">INTERNAL USE · PoC</span><strong>生成AI 利用リスクチェック</strong></div>
+    <span class="version">社内ガイドライン v1.5</span>
+  </header>
+
+  <main class="layout">
+    <section class="intro">
+      <p class="eyebrow">USE RESPONSIBLY</p>
+      <h1>その使い方、<br><span>事前に確認</span>しませんか。</h1>
+      <p class="lead">情報の種類やAIの使い方を選ぶと、ガイドラインに基づく確認ポイントを表示します。</p>
+      <div class="notice"><span class="notice-icon">i</span><p><strong>判定は目安です。</strong><br>正式な承認やセキュリティ審査ではありません。迷った場合やグレーな利用は、本部長・ITPM部など所定の相談先に確認してください。</p></div>
+      <div class="privacy"><span aria-hidden="true">◉</span> 入力内容は保存せず、この画面内で判定します</div>
+    </section>
+
+    <section class="form-card" aria-labelledby="form-title">
+      <div class="card-heading"><div><p class="eyebrow">CHECKLIST</p><h2 id="form-title">利用計画を入力</h2></div><span class="step">約1分</span></div>
+      <form action="{{ url_for('check') }}" method="post">
+        <fieldset>
+          <legend><span class="number">01</span><span>入力する情報</span></legend>
+          <label class="question" for="personal_data">個人情報（氏名・住所・マイナンバー等）を入力しますか？</label>
+          <select id="personal_data" name="personal_data" required><option value="no">いいえ</option><option value="yes">はい</option></select>
+
+          <label class="question" for="restricted_data">社外秘・秘密・極秘の社内情報を入力しますか？</label>
+          <select id="restricted_data" name="restricted_data" required><option value="no">いいえ</option><option value="yes">はい</option></select>
+
+          <label class="question" for="customer_data">顧客から受領した情報を入力しますか？</label>
+          <select id="customer_data" name="customer_data" required><option value="no">いいえ</option><option value="yes">はい</option></select>
+          <div class="conditional">
+            <label for="customer_permission">顧客から生成AIへの入力許可を得ていますか？</label>
+            <select id="customer_permission" name="customer_permission"><option value="no">いいえ／未確認</option><option value="yes">はい</option></select>
+          </div>
+          <div class="conditional">
+            <label for="enterprise_protection">利用環境にエンタープライズ保護（情報漏えい対策等）がありますか？</label>
+            <select id="enterprise_protection" name="enterprise_protection"><option value="no">いいえ／未確認</option><option value="yes">はい</option></select>
+          </div>
+          <div class="conditional">
+            <label for="closed_environment">外部と遮断された閉鎖環境ですか？</label>
+            <select id="closed_environment" name="closed_environment"><option value="no">いいえ／未確認</option><option value="yes">はい</option></select>
+          </div>
+          <div class="conditional">
+            <label for="division_head_approval">社外秘等の入力について本部長以上の許可を得ていますか？</label>
+            <select id="division_head_approval" name="division_head_approval"><option value="no">いいえ／未確認</option><option value="yes">はい</option></select>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend><span class="number">02</span><span>サービスと用途</span></legend>
+          <label class="question" for="service">利用する生成AIサービス</label>
+          <select id="service" name="service" required>
+            <option value="microsoft">Microsoft Copilot（会社推奨）</option>
+            <option value="github">GitHub Copilot Business / Enterprise</option>
+            <option value="other">上記以外・未確認</option>
+          </select>
+          <div class="conditional">
+            <label for="public_code_filter">GitHub Copilotの「Suggestions matching public code」をブロックしていますか？</label>
+            <select id="public_code_filter" name="public_code_filter"><option value="no">いいえ／未確認</option><option value="yes">はい</option></select>
+          </div>
+          <div class="conditional">
+            <label for="customer_rules">顧客先で利用する場合、顧客のルールを確認しましたか？</label>
+            <select id="customer_rules" name="customer_rules"><option value="no">該当しない／未確認</option><option value="yes">はい</option></select>
+          </div>
+
+          <label class="question" for="use_case">主な使い方</label>
+          <select id="use_case" name="use_case" required>
+            <option value="assist">翻訳・要約・公開情報の整理など補助的な利用</option>
+            <option value="decision">判断・意思決定に直接影響する</option>
+            <option value="agent">AIエージェントが自律的に実行・操作する</option>
+            <option value="external">生成結果を顧客へ提供・社外公開する</option>
+          </select>
+          <label class="question" for="dangerous_action">削除・外部送信・権限変更などの危険な操作がありますか？</label>
+          <select id="dangerous_action" name="dangerous_action" required><option value="no">いいえ</option><option value="yes">はい</option></select>
+          <label class="question" for="copyright_use">生成物の種類・利用先</label>
+          <select id="copyright_use" name="copyright_use" required>
+            <option value="internal">社内での補助利用</option>
+            <option value="code">プログラムコード（顧客提供を含む）</option>
+            <option value="external_media">記事・論文・小説・画像・動画・3D・音声・音楽を社外利用</option>
+            <option value="other">その他／未確認</option>
+          </select>
+        </fieldset>
+        <button class="submit" type="submit">リスクをチェック <span aria-hidden="true">→</span></button>
+        <p class="form-footnote">実際の文書・コード・顧客情報などは入力しないでください。</p>
+      </form>
+    </section>
+
+    {% if result %}
+    <section class="result-card result-{{ result.level }}" aria-live="polite" aria-labelledby="result-title">
+      <div class="result-top"><span class="result-icon" aria-hidden="true">{% if result.level == 'prohibited' %}×{% elif result.level == 'high' %}!{% else %}✓{% endif %}</span><div><p class="eyebrow">CHECK RESULT</p><h2 id="result-title">{{ result.title }}</h2></div></div>
+      <p class="result-summary">{{ result.summary }}</p>
+      {% if result.blockers %}<h3>利用を止めて確認</h3><ul>{% for item in result.blockers %}<li>{{ item }}</li>{% endfor %}</ul>{% endif %}
+      {% if result.actions %}<h3>必要な確認・対応</h3><ul>{% for item in result.actions %}<li>{{ item }}</li>{% endfor %}</ul>{% endif %}
+      {% if result.notes %}<h3>補足</h3><ul>{% for item in result.notes %}<li>{{ item }}</li>{% endfor %}</ul>{% endif %}
+      <p class="source-note">判定根拠：生成AI利用ガイドライン v1.5（2026年5月1日版）第5章・付録のリスク判定フローチャート</p>
+    </section>
+    {% endif %}
+
+    <footer>社内PoC · 入力内容は保存されません · ガイドラインの改定時は判定ルールも見直してください</footer>
+  </main>
+</body>
+</html>
